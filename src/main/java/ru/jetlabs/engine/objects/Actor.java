@@ -1,17 +1,19 @@
 package ru.jetlabs.engine.objects;
 
+import ru.jetlabs.engine.objects.components.Component;
 import ru.jetlabs.engine.util.DPoint;
 
 public class Actor {
     private final DPoint coord;
     private DPoint target;
-    private double mass;    // масса в кг
-    private double thrust;  // тяга в Н
+    private double mass;    //кг
+    private double thrust;  //Н
     private double velocityX;     // скорость по X (м/с)
     private double velocityY;     // скорость по Y (м/с)
-    private double kP = 10;
+    private double kP = 3;
     private double kD = 15;
     private double radius = 10;
+    private String name = "Корабль 1";
 
     public Actor(double x, double y, double mass, double thrust) {
         this.coord = new DPoint(x, y);
@@ -30,65 +32,77 @@ public class Actor {
         this.radius = radius;
     }
 
-    public DPoint getCoord() { return coord; }
+    public DPoint getCoord() {
+        return coord;
+    }
 
     public static double calculateRadius(double totalSize) {
-        return Math.sqrt(totalSize+10)/Math.PI;
+        return 10;
+    }
+
+    public static double calculateMass(Component... components) {
+        return 10;
     }
 
     public void setTarget(double x, double y) {
+        System.out.println(radius);
         target = new DPoint(x, y);
 
         double dx = x - coord.getX();
         double dy = y - coord.getY();
         double distance = Math.sqrt(dx * dx + dy * dy);
-        System.out.println(distance);
-        kD = Math.sqrt(distance/100);
-        System.out.println(kD);
+        kD = Math.sqrt(distance / 20);
     }
 
-    public void destroy(){}
-    public void hit(DPoint hitCoord){}
+    public void destroy() {
+    }
+
+    public void hit(DPoint hitCoord) {
+    }
 
     public void update(double deltaTime) {
         if (target == null) return;
-        DPoint oldCoord = coord.copy();
-        // Рассчитываем вектор направления к цели
+
         double dx = target.getX() - coord.getX();
         double dy = target.getY() - coord.getY();
+        double distance = Math.hypot(dx, dy);
 
-        double desiredAx = (dx * kP) - (velocityX * kD);
-        double desiredAy = (dy * kP) - (velocityY * kD);
+        double speed = Math.hypot(velocityX, velocityY);
+        double brakingDistance = (speed * speed) / (2 * (thrust / mass));
+        boolean shouldBrake = distance <= brakingDistance;
+
+        double desiredAx, desiredAy;
+        if (shouldBrake) {
+            if (speed > 0) {
+                desiredAx = (-velocityX / speed) * (thrust / mass);
+                desiredAy = (-velocityY / speed) * (thrust / mass);
+            } else {
+                desiredAx = 0;
+                desiredAy = 0;
+            }
+        } else {
+            double adaptiveKp = kP * (1 + distance / 1000.0);
+            desiredAx = (dx * adaptiveKp) - (velocityX * kD);
+            desiredAy = (dy * adaptiveKp) - (velocityY * kD);
+        }
+
         double maxAccel = thrust / mass;
         double desiredAccel = Math.hypot(desiredAx, desiredAy);
-
         if (desiredAccel > maxAccel) {
             double scale = maxAccel / desiredAccel;
             desiredAx *= scale;
             desiredAy *= scale;
         }
 
-        // Обновление скорости
-        double newVelocityX = velocityX + desiredAx * deltaTime;
-        double newVelocityY = velocityY + desiredAy * deltaTime;
+        velocityX += desiredAx * deltaTime;
+        velocityY += desiredAy * deltaTime;
+        coord.setX(coord.getX() + velocityX * deltaTime);
+        coord.setY(coord.getY() + velocityY * deltaTime);
 
-        // Рассчитываем новую позицию
-        DPoint newCoord = new DPoint(
-                coord.getX() + newVelocityX * deltaTime,
-                coord.getY() + newVelocityY * deltaTime
-        );
-
-        // Проверяем пересечение пути с окружностью цели
-        if (checkIntersection(oldCoord, newCoord, target, 10)) {
-            handleCollision(oldCoord, newCoord, target, 10);
+        if (distance < 0.1 && velocityX < 0.01 && velocityY < 0.01) {
             target = null;
             velocityX = 0;
             velocityY = 0;
-        } else {
-          coord.setX(newCoord.getX());
-          coord.setY(newCoord.getY());
-          velocityX = newVelocityX;
-          velocityY = newVelocityY;
         }
     }
 
@@ -184,5 +198,17 @@ public class Actor {
         double hitY = ay + dy * t;
         coord.setX(hitX);
         coord.setY(hitY);
+    }
+
+    public double radius() {
+        return radius;
+    }
+
+    public double speed() {
+        return Math.sqrt(velocityX * velocityX + velocityY * velocityY);
+    }
+
+    public String name() {
+        return name;
     }
 }
