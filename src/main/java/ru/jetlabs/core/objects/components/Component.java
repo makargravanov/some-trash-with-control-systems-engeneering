@@ -1,14 +1,18 @@
-package ru.jetlabs.engine.objects.components;
+package ru.jetlabs.core.objects.components;
+
+
 
 public abstract class Component {
     protected double mass;
     protected double hp;
     protected double size;
+    protected ComponentType type;
 
-    public Component(double mass, double size) {
+    public Component(double mass, double size, ComponentType type) {
         this.mass = mass;
         hp = 50;
         this.size = size;
+        this.type = type;
     }
 
     public double mass() {
@@ -31,5 +35,9 @@ public abstract class Component {
 
     public double size() {
         return size;
+    }
+
+    public ComponentType type(){
+        return this.type;
     }
 }

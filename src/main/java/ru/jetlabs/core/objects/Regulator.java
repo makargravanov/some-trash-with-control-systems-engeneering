@@ -1,4 +1,4 @@
-package ru.jetlabs.engine.objects;
+package ru.jetlabs.core.objects;
 
 public interface Regulator {
 

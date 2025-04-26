@@ -1,13 +1,14 @@
-package ru.jetlabs.engine.objects.components.engines.impls;
+package ru.jetlabs.core.objects.components.engines.impls;
 
-import ru.jetlabs.engine.objects.components.Component;
-import ru.jetlabs.engine.objects.components.engines.NoFuelEngine;
+import ru.jetlabs.core.objects.components.Component;
+import ru.jetlabs.core.objects.components.ComponentType;
+import ru.jetlabs.core.objects.components.engines.NoFuelEngine;
 
 public class IdealEngine extends Component implements NoFuelEngine{
     private double thrust;
 
     public IdealEngine(double size) {
-        super(size*50, size);
+        super(size*50, size, ComponentType.ENGINE);
         thrust = size*5000;
     }
 

@@ -1,6 +1,6 @@
-package ru.jetlabs.engine.environment;
+package ru.jetlabs.core.environment;
 
-import ru.jetlabs.engine.objects.Actor;
+import ru.jetlabs.core.objects.Actor;
 
 import java.util.ArrayList;
 import java.util.List;

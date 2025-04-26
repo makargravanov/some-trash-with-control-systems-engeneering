@@ -1,9 +1,9 @@
-package ru.jetlabs.engine.objects.entities;
+package ru.jetlabs.core.objects.entities;
 
-import ru.jetlabs.engine.objects.Actor;
-import ru.jetlabs.engine.objects.Ship;
-import ru.jetlabs.engine.objects.components.Component;
-import ru.jetlabs.engine.objects.components.engines.Engine;
+import ru.jetlabs.core.objects.Actor;
+import ru.jetlabs.core.objects.Ship;
+import ru.jetlabs.core.objects.components.Component;
+import ru.jetlabs.core.objects.components.engines.Engine;
 
 public class SpaceShip extends Actor implements Ship {
     public Engine engine;

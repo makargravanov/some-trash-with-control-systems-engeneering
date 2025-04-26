@@ -1,6 +1,6 @@
-package ru.jetlabs.engine.objects.entities;
+package ru.jetlabs.core.objects.entities;
 
-import ru.jetlabs.engine.objects.Actor;
+import ru.jetlabs.core.objects.Actor;
 
 public class Shell extends Actor {
 

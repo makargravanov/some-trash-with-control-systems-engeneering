@@ -1,4 +1,4 @@
-package ru.jetlabs.engine.objects.components.engines;
+package ru.jetlabs.core.objects.components.engines;
 
 public interface FuelEngine extends Engine{
 

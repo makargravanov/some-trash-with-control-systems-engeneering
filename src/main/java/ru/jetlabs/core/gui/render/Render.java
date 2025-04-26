@@ -1,18 +1,16 @@
-package ru.jetlabs.engine.render;
+package ru.jetlabs.core.gui.render;
 
-import ru.jetlabs.engine.environment.Level;
-import ru.jetlabs.engine.objects.Actor;
-import ru.jetlabs.engine.objects.components.engines.impls.IdealEngine;
-import ru.jetlabs.engine.objects.entities.SpaceShip;
-import ru.jetlabs.engine.render.formatters.Formatters;
-import ru.jetlabs.engine.util.DPoint;
+import ru.jetlabs.core.environment.Level;
+import ru.jetlabs.core.objects.Actor;
+import ru.jetlabs.core.objects.components.engines.impls.IdealEngine;
+import ru.jetlabs.core.objects.entities.SpaceShip;
+import ru.jetlabs.core.gui.render.formatters.Formatters;
+import ru.jetlabs.core.util.DPoint;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.HashMap;
-import java.util.Map;
 
 public class Render {
     private final JPanel panel;
@@ -49,12 +47,9 @@ public class Render {
             setupG2d(g2d);
 
             for (Actor actor : level.getActors()) {
-
                 RenderActorBody result = renderActorBody(actor, g2d);
                 renderActorLabel(actor, g2d, result);
-
             }
-
             renderScalingParamsData(g2d);
         } finally {
             g2d.dispose();

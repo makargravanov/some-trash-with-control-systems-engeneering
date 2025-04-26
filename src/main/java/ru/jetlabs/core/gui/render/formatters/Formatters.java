@@ -1,4 +1,4 @@
-package ru.jetlabs.engine.render.formatters;
+package ru.jetlabs.core.gui.render.formatters;
 
 import java.util.Locale;
 

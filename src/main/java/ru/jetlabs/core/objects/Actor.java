@@ -1,7 +1,7 @@
-package ru.jetlabs.engine.objects;
+package ru.jetlabs.core.objects;
 
-import ru.jetlabs.engine.objects.components.Component;
-import ru.jetlabs.engine.util.DPoint;
+import ru.jetlabs.core.objects.components.Component;
+import ru.jetlabs.core.util.DPoint;
 
 public class Actor {
     private final DPoint coord;
