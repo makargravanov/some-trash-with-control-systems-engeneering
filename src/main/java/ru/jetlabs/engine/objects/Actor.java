@@ -5,13 +5,13 @@ import ru.jetlabs.engine.util.DPoint;
 public class Actor {
     private final DPoint coord;
     private DPoint target;
-    private final double mass;    // масса в кг
-    private final double thrust;  // тяга в Н
+    private double mass;    // масса в кг
+    private double thrust;  // тяга в Н
     private double velocityX;     // скорость по X (м/с)
     private double velocityY;     // скорость по Y (м/с)
-    private double fullDistance;
-    private double kP = 0.5;
-    private double kD = 0.5;
+    private double kP = 10;
+    private double kD = 15;
+    private double radius = 10;
 
     public Actor(double x, double y, double mass, double thrust) {
         this.coord = new DPoint(x, y);
@@ -21,38 +21,41 @@ public class Actor {
         this.velocityY = 0;
     }
 
+    public Actor(double x, double y, double mass, double thrust, double radius) {
+        this.coord = new DPoint(x, y);
+        this.mass = mass;
+        this.thrust = thrust;
+        this.velocityX = 0;
+        this.velocityY = 0;
+        this.radius = radius;
+    }
+
     public DPoint getCoord() { return coord; }
+
+    public static double calculateRadius(double totalSize) {
+        return Math.sqrt(totalSize+10)/Math.PI;
+    }
 
     public void setTarget(double x, double y) {
         target = new DPoint(x, y);
 
         double dx = x - coord.getX();
         double dy = y - coord.getY();
-        fullDistance = Math.sqrt(dx * dx + dy * dy);
+        double distance = Math.sqrt(dx * dx + dy * dy);
+        System.out.println(distance);
+        kD = Math.sqrt(distance/100);
+        System.out.println(kD);
     }
+
+    public void destroy(){}
+    public void hit(DPoint hitCoord){}
 
     public void update(double deltaTime) {
         if (target == null) return;
-
         DPoint oldCoord = coord.copy();
-
         // Рассчитываем вектор направления к цели
         double dx = target.getX() - coord.getX();
         double dy = target.getY() - coord.getY();
-        double distance = Math.sqrt(dx * dx + dy * dy);
-
-        int breaking = 1;
-        if (distance < fullDistance/2){
-            breaking = -1;
-            System.out.println("aaa");
-        }
-
-        if (distance < 10) {
-            velocityX = 0;
-            velocityY = 0;
-            target = null;
-            return;
-        }
 
         double desiredAx = (dx * kP) - (velocityX * kD);
         double desiredAy = (dy * kP) - (velocityY * kD);
@@ -82,10 +85,10 @@ public class Actor {
             velocityX = 0;
             velocityY = 0;
         } else {
-            coord.setX(newCoord.getX());
-            coord.setY(newCoord.getY());
-            velocityX = newVelocityX;
-            velocityY = newVelocityY;
+          coord.setX(newCoord.getX());
+          coord.setY(newCoord.getY());
+          velocityX = newVelocityX;
+          velocityY = newVelocityY;
         }
     }
 
@@ -133,6 +136,39 @@ public class Actor {
         double A = dx * dx + dy * dy;
         double B = 2 * (dx * acx + dy * acy);
         double C = acx * acx + acy * acy - radius * radius;
+
+        double discriminant = B * B - 4 * A * C;
+        discriminant = Math.sqrt(discriminant);
+
+        double t1 = (-B - discriminant) / (2 * A);
+        double t2 = (-B + discriminant) / (2 * A);
+
+        double t = 1;
+        if (t1 >= 0 && t1 <= 1) t = Math.min(t1, t);
+        if (t2 >= 0 && t2 <= 1) t = Math.min(t2, t);
+
+        double hitX = ax + dx * t;
+        double hitY = ay + dy * t;
+        coord.setX(hitX);
+        coord.setY(hitY);
+    }
+
+    private void handleCollision(DPoint oldPos, DPoint newPos, Actor target) {
+        double ax = oldPos.getX();
+        double ay = oldPos.getY();
+        double bx = newPos.getX();
+        double by = newPos.getY();
+        double cx = target.coord.getX();
+        double cy = target.coord.getY();
+
+        double dx = bx - ax;
+        double dy = by - ay;
+        double acx = cx - ax;
+        double acy = cy - ay;
+
+        double A = dx * dx + dy * dy;
+        double B = 2 * (dx * acx + dy * acy);
+        double C = acx * acx + acy * acy - target.radius * target.radius;
 
         double discriminant = B * B - 4 * A * C;
         discriminant = Math.sqrt(discriminant);

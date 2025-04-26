@@ -2,6 +2,7 @@ package ru.jetlabs.engine.render;
 
 import ru.jetlabs.engine.environment.Level;
 import ru.jetlabs.engine.objects.Actor;
+import ru.jetlabs.engine.objects.entities.SpaceShip;
 import ru.jetlabs.engine.util.DPoint;
 
 import javax.swing.*;
@@ -158,7 +159,7 @@ public class Render {
 
     public static void main(String[] args) {
         Level level = new Level();
-        level.addActor(new Actor(0, 0, 10.0, 5000.0));
+        level.addActor(new SpaceShip(0,0));
 
         JFrame frame = new JFrame("Level Render");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
