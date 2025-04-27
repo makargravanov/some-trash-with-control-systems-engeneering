@@ -5,7 +5,7 @@ import ru.jetlabs.core.objects.Actor;
 import ru.jetlabs.core.objects.components.engines.impls.IdealEngine;
 import ru.jetlabs.core.objects.entities.SpaceShip;
 import ru.jetlabs.core.gui.render.formatters.Formatters;
-import ru.jetlabs.core.util.DPoint;
+import ru.jetlabs.core.util.structures.DPoint;
 
 import javax.swing.*;
 import java.awt.*;

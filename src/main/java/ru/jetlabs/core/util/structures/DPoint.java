@@ -1,4 +1,4 @@
-package ru.jetlabs.core.util;
+package ru.jetlabs.core.util.structures;
 
 import java.util.Objects;
 
