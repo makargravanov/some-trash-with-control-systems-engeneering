@@ -2,21 +2,21 @@ package ru.jetlabs.core.util.structures;
 
 import java.util.Objects;
 
-public class DPoint {
+public class Vector2d {
     private double x;
     private double y;
 
-    public DPoint(double x, double y) {
+    public Vector2d(double x, double y) {
         this.x = x;
         this.y = y;
     }
 
-    public DPoint setX(double x) {
+    public Vector2d setX(double x) {
         this.x = x;
         return this;
     }
 
-    public DPoint setY(double y) {
+    public Vector2d setY(double y) {
         this.y = y;
         return this;
     }
@@ -24,8 +24,8 @@ public class DPoint {
     public double getX() { return x; }
     public double getY() { return y; }
 
-    public DPoint copy(){
-        return new DPoint(x,y);
+    public Vector2d copy(){
+        return new Vector2d(x,y);
     }
 
     @Override
@@ -36,8 +36,8 @@ public class DPoint {
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
-        DPoint dPoint = (DPoint) o;
-        return Double.compare(x, dPoint.x) == 0 && Double.compare(y, dPoint.y) == 0;
+        Vector2d vector2d = (Vector2d) o;
+        return Double.compare(x, vector2d.x) == 0 && Double.compare(y, vector2d.y) == 0;
     }
 
     @Override

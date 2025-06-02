@@ -1,17 +1,24 @@
 package ru.jetlabs;
 
-//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
-// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
+import ru.jetlabs.develop.helpers.EnergyCalculator;
+import ru.jetlabs.develop.helpers.RadiusCalculator;
+import ru.jetlabs.develop.helpers.ShellMassCalculator;
+
+import java.io.PrintStream;
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
+import java.util.Random;
+
 public class Main {
     public static void main(String[] args) {
-        //TIP Press <shortcut actionId="ShowIntentionActions"/> with your caret at the highlighted text
-        // to see how IntelliJ IDEA suggests fixing it.
-        System.out.printf("Hello and welcome!");
+        System.setOut(new PrintStream(System.out, true, StandardCharsets.UTF_8));
 
-        for (int i = 1; i <= 5; i++) {
-            //TIP Press <shortcut actionId="Debug"/> to start debugging your code. We have set one <icon src="AllIcons.Debugger.Db_set_breakpoint"/> breakpoint
-            // for you, but you can always add more by pressing <shortcut actionId="ToggleLineBreakpoint"/>.
-            System.out.println("i = " + i);
-        }
+        EnergyCalculator.calculate(
+                ShellMassCalculator.calculateMass(0.05,0.4),
+                30000);
+        EnergyCalculator.calculate(
+                0.0061,
+                315);
+        RadiusCalculator.getCircleLength(RadiusCalculator.getRadius(11.52));
     }
 }

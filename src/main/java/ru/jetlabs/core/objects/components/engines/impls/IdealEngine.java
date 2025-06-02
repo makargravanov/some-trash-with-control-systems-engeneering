@@ -8,8 +8,8 @@ public class IdealEngine extends Component implements NoFuelEngine{
     private double thrust;
 
     public IdealEngine(double size) {
-        super(size*50, size, ComponentType.ENGINE);
-        thrust = size*5000;
+        super(size*11.52, size);
+        thrust = 4_152_000;
     }
 
     @Override

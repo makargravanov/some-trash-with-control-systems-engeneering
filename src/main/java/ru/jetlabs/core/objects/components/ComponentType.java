@@ -1,5 +1,7 @@
 package ru.jetlabs.core.objects.components;
 
-public enum ComponentType {
+import java.io.Serializable;
+
+public enum ComponentType implements Serializable {
     ENGINE,
 }

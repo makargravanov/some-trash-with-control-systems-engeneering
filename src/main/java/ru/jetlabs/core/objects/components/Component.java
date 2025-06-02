@@ -1,18 +1,22 @@
 package ru.jetlabs.core.objects.components;
 
 
+import java.io.Serializable;
 
-public abstract class Component {
+public abstract class Component implements Serializable {
     protected double mass;
     protected double hp;
     protected double size;
-    protected ComponentType type;
 
-    public Component(double mass, double size, ComponentType type) {
+    public Component(double mass, double size) {
         this.mass = mass;
-        hp = 50;
+        this.hp = 50;
         this.size = size;
-        this.type = type;
+    }
+    public Component(double mass, double hp, double size) {
+        this.mass = mass;
+        this.hp = hp;
+        this.size = size;
     }
 
     public double mass() {
@@ -35,9 +39,5 @@ public abstract class Component {
 
     public double size() {
         return size;
-    }
-
-    public ComponentType type(){
-        return this.type;
     }
 }

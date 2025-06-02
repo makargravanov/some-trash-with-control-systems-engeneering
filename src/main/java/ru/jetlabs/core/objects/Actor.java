@@ -1,22 +1,25 @@
 package ru.jetlabs.core.objects;
 
 import ru.jetlabs.core.objects.components.Component;
-import ru.jetlabs.core.util.structures.DPoint;
+import ru.jetlabs.core.util.structures.Vector2d;
+
+import java.util.List;
 
 public class Actor {
-    private final DPoint coord;
-    private DPoint target;
-    private double mass;    //кг
-    private double thrust;  //Н
-    private double velocityX;     // скорость по X (м/с)
-    private double velocityY;     // скорость по Y (м/с)
-    private double kP = 3;
-    private double kD = 15;
-    private double radius = 10;
-    private String name = "Корабль 1";
+    public List<Actor> actors;
+    public final Vector2d coord;
+    public Vector2d target;
+    public double mass;    //кг
+    protected double thrust;  //Н
+    public double velocityX = 0;     // скорость по X (м/с)
+    public double velocityY = 0;     // скорость по Y (м/с)
+    protected double kP = 3;
+    protected double kD = 15;
+    public double radius = 10;
+    protected String name = "Корабль 1";
 
     public Actor(double x, double y, double mass, double thrust) {
-        this.coord = new DPoint(x, y);
+        this.coord = new Vector2d(x, y);
         this.mass = mass;
         this.thrust = thrust;
         this.velocityX = 0;
@@ -24,7 +27,7 @@ public class Actor {
     }
 
     public Actor(double x, double y, double mass, double thrust, double radius) {
-        this.coord = new DPoint(x, y);
+        this.coord = new Vector2d(x, y);
         this.mass = mass;
         this.thrust = thrust;
         this.velocityX = 0;
@@ -32,21 +35,13 @@ public class Actor {
         this.radius = radius;
     }
 
-    public DPoint getCoord() {
+    public Vector2d getCoord() {
         return coord;
-    }
-
-    public static double calculateRadius(double totalSize) {
-        return 10;
-    }
-
-    public static double calculateMass(Component... components) {
-        return 10;
     }
 
     public void setTarget(double x, double y) {
         System.out.println(radius);
-        target = new DPoint(x, y);
+        target = new Vector2d(x, y);
 
         double dx = x - coord.getX();
         double dy = y - coord.getY();
@@ -55,86 +50,16 @@ public class Actor {
     }
 
     public void destroy() {
+        actors.remove(this);
     }
 
-    public void hit(DPoint hitCoord) {
+    public void hit(Vector2d hitCoord) {
     }
 
     public void update(double deltaTime) {
-        if (target == null) return;
-
-        double dx = target.getX() - coord.getX();
-        double dy = target.getY() - coord.getY();
-        double distance = Math.hypot(dx, dy);
-
-        double speed = Math.hypot(velocityX, velocityY);
-        double brakingDistance = (speed * speed) / (2 * (thrust / mass));
-        boolean shouldBrake = distance <= brakingDistance;
-
-        double desiredAx, desiredAy;
-        if (shouldBrake) {
-            if (speed > 0) {
-                desiredAx = (-velocityX / speed) * (thrust / mass);
-                desiredAy = (-velocityY / speed) * (thrust / mass);
-            } else {
-                desiredAx = 0;
-                desiredAy = 0;
-            }
-        } else {
-            double adaptiveKp = kP * (1 + distance / 1000.0);
-            desiredAx = (dx * adaptiveKp) - (velocityX * kD);
-            desiredAy = (dy * adaptiveKp) - (velocityY * kD);
-        }
-
-        double maxAccel = thrust / mass;
-        double desiredAccel = Math.hypot(desiredAx, desiredAy);
-        if (desiredAccel > maxAccel) {
-            double scale = maxAccel / desiredAccel;
-            desiredAx *= scale;
-            desiredAy *= scale;
-        }
-
-        velocityX += desiredAx * deltaTime;
-        velocityY += desiredAy * deltaTime;
-        coord.setX(coord.getX() + velocityX * deltaTime);
-        coord.setY(coord.getY() + velocityY * deltaTime);
-
-        if (distance < 0.1 && velocityX < 0.01 && velocityY < 0.01) {
-            target = null;
-            velocityX = 0;
-            velocityY = 0;
-        }
     }
 
-    private boolean checkIntersection(DPoint a, DPoint b, DPoint center, double radius) {
-        double distA = Math.hypot(a.getX() - center.getX(), a.getY() - center.getY());
-        if (distA <= radius) return true;
-
-        double distB = Math.hypot(b.getX() - center.getX(), b.getY() - center.getY());
-        if (distB <= radius) return true;
-
-        double dx = b.getX() - a.getX();
-        double dy = b.getY() - a.getY();
-        double acx = center.getX() - a.getX();
-        double acy = center.getY() - a.getY();
-
-        double A = dx * dx + dy * dy;
-        if (A == 0) return false;
-
-        double B = 2 * (dx * acx + dy * acy);
-        double C = acx * acx + acy * acy - radius * radius;
-
-        double discriminant = B * B - 4 * A * C;
-        if (discriminant < 0) return false;
-
-        discriminant = Math.sqrt(discriminant);
-        double t1 = (-B - discriminant) / (2 * A);
-        double t2 = (-B + discriminant) / (2 * A);
-
-        return (t1 >= 0 && t1 <= 1) || (t2 >= 0 && t2 <= 1);
-    }
-
-    private void handleCollision(DPoint oldPos, DPoint newPos, DPoint target, double radius) {
+    private void handleCollision(Vector2d oldPos, Vector2d newPos, Vector2d target, double radius) {
         double ax = oldPos.getX();
         double ay = oldPos.getY();
         double bx = newPos.getX();
@@ -167,7 +92,7 @@ public class Actor {
         coord.setY(hitY);
     }
 
-    private void handleCollision(DPoint oldPos, DPoint newPos, Actor target) {
+    private void handleCollision(Vector2d oldPos, Vector2d newPos, Actor target) {
         double ax = oldPos.getX();
         double ay = oldPos.getY();
         double bx = newPos.getX();
@@ -198,6 +123,10 @@ public class Actor {
         double hitY = ay + dy * t;
         coord.setX(hitX);
         coord.setY(hitY);
+    }
+
+    public void applyKineticDamage(double mass, double speed) {
+
     }
 
     public double radius() {

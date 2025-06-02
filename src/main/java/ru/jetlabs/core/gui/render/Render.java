@@ -2,20 +2,26 @@ package ru.jetlabs.core.gui.render;
 
 import ru.jetlabs.core.environment.Level;
 import ru.jetlabs.core.objects.Actor;
+import ru.jetlabs.core.objects.components.armor.ArmorMaterial;
+import ru.jetlabs.core.objects.components.armor.ArmorMesh;
 import ru.jetlabs.core.objects.components.engines.impls.IdealEngine;
 import ru.jetlabs.core.objects.entities.SpaceShip;
 import ru.jetlabs.core.gui.render.formatters.Formatters;
-import ru.jetlabs.core.util.structures.DPoint;
+import ru.jetlabs.core.util.structures.Vector2d;
+import ru.jetlabs.develop.helpers.ArmorMeshView;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.WindowEvent;
 
 public class Render {
     private final JPanel panel;
     private final Level level;
     private Actor selectedActor;
+
+    private ArmorMeshView armorMeshView;
 
     private double scale = 1.0;
     private double offsetX = 0;
@@ -28,9 +34,10 @@ public class Render {
 
     public static void main(String[] args) {
         Level level = new Level();
-        level.addActor(new SpaceShip(0,0, new IdealEngine(10)));
-
+        level.addActor(new SpaceShip(0,0, new IdealEngine(3.6*3.2), ArmorMaterial.STEEL, ArmorMaterial.PLASTEEL));
+        level.addActor(new SpaceShip(100,100, new IdealEngine(3.6*3.2), ArmorMaterial.STEEL, ArmorMaterial.PLASTEEL));
         JFrame frame = new JFrame("Level Render");
+
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         Render render = new Render(level);
@@ -49,6 +56,12 @@ public class Render {
             for (Actor actor : level.getActors()) {
                 RenderActorBody result = renderActorBody(actor, g2d);
                 renderActorLabel(actor, g2d, result);
+            }
+            if(armorMeshView!=null){
+                armorMeshView.repaint();
+            }else if(selectedActor!=null&&selectedActor instanceof SpaceShip){
+                ArmorMesh armor = ((SpaceShip) selectedActor).armor;
+                armorMeshView = new ArmorMeshView(armor);
             }
             renderScalingParamsData(g2d);
         } finally {
@@ -101,7 +114,7 @@ public class Render {
     }
 
     private RenderActorBody renderActorBody(Actor actor, Graphics2D g2d) {
-        DPoint coord = actor.getCoord();
+        Vector2d coord = actor.getCoord();
         int x = (int) ((coord.getX() - offsetX) * scale);
         int y = (int) ((coord.getY() - offsetY) * scale);
 
@@ -188,11 +201,17 @@ public class Render {
 
         selectedActor = null;
         for (Actor actor : level.getActors()) {
-            DPoint coord = actor.getCoord();
+            Vector2d coord = actor.getCoord();
             double dx = coord.getX() - worldX;
             double dy = coord.getY() - worldY;
             if (dx*dx + dy*dy <= selectionRadius*selectionRadius) {
                 selectedActor = actor;
+                if(selectedActor instanceof SpaceShip) {
+                    if(armorMeshView!=null){
+                        armorMeshView.setVisible(false);
+                    }
+                    armorMeshView = new ArmorMeshView(((SpaceShip) selectedActor).armor);
+                }
                 break;
             }
         }
