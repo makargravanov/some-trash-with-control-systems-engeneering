@@ -4,4 +4,5 @@ import java.io.Serializable;
 
 public enum ComponentType implements Serializable {
     ENGINE,
+    TURRET
 }

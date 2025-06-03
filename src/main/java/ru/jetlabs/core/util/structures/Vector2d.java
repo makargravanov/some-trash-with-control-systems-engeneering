@@ -11,6 +11,17 @@ public class Vector2d {
         this.y = y;
     }
 
+    public Vector2d multiply(double scalar) {
+        return new Vector2d(x * scalar, y * scalar);
+    }
+
+    public Vector2d normalize() {
+        double length = Math.sqrt(x * x + y * y);
+        if (length == 0) {
+            return new Vector2d(0, 0);
+        }
+        return new Vector2d(x / length, y / length);
+    }
     public Vector2d setX(double x) {
         this.x = x;
         return this;

@@ -1,6 +1,7 @@
 package ru.jetlabs.core.objects;
 
 import ru.jetlabs.core.objects.components.Component;
+import ru.jetlabs.core.objects.entities.Shell;
 import ru.jetlabs.core.util.structures.Vector2d;
 
 import java.util.List;
@@ -16,7 +17,7 @@ public class Actor {
     protected double kP = 3;
     protected double kD = 15;
     public double radius = 10;
-    protected String name = "Корабль 1";
+    public String name = "Корабль 1";
 
     public Actor(double x, double y, double mass, double thrust) {
         this.coord = new Vector2d(x, y);
@@ -33,6 +34,10 @@ public class Actor {
         this.velocityX = 0;
         this.velocityY = 0;
         this.radius = radius;
+    }
+
+    public Shell strike(double x, double y){
+        return null;
     }
 
     public Vector2d getCoord() {

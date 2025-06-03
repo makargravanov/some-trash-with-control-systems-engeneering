@@ -4,7 +4,7 @@ public class RadiusCalculator {
 
     public static double getRadius(double size){
         System.out.println("Радиус = " + Math.sqrt(size+5)/Math.PI);
-        return Math.sqrt(size+5)/Math.PI;
+        return Math.sqrt((size+5)/Math.PI);
     }
 
     public static double getCircleLength(double radius){

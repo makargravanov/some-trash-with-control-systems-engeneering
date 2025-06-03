@@ -5,6 +5,8 @@ import ru.jetlabs.core.objects.Actor;
 import ru.jetlabs.core.objects.components.armor.ArmorMaterial;
 import ru.jetlabs.core.objects.components.armor.ArmorMesh;
 import ru.jetlabs.core.objects.components.engines.impls.IdealEngine;
+import ru.jetlabs.core.objects.components.engines.impls.IdealKineticGun;
+import ru.jetlabs.core.objects.entities.Shell;
 import ru.jetlabs.core.objects.entities.SpaceShip;
 import ru.jetlabs.core.gui.render.formatters.Formatters;
 import ru.jetlabs.core.util.structures.Vector2d;
@@ -34,8 +36,13 @@ public class Render {
 
     public static void main(String[] args) {
         Level level = new Level();
-        level.addActor(new SpaceShip(0,0, new IdealEngine(3.6*3.2), ArmorMaterial.STEEL, ArmorMaterial.PLASTEEL));
-        level.addActor(new SpaceShip(100,100, new IdealEngine(3.6*3.2), ArmorMaterial.STEEL, ArmorMaterial.PLASTEEL));
+        level.addActor(new SpaceShip(0,0, new IdealEngine(3.6*3.2),
+                new IdealKineticGun(100,2,0.1,0.6,300_000_000),
+                ArmorMaterial.STEEL, ArmorMaterial.PLASTEEL));
+
+        level.addActor(new SpaceShip(100,100, new IdealEngine(3.6*3.2),
+                new IdealKineticGun(100,2,0.1,0.5,300_000_000),
+                ArmorMaterial.STEEL, ArmorMaterial.PLASTEEL));
         JFrame frame = new JFrame("Level Render");
 
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -54,9 +61,17 @@ public class Render {
             setupG2d(g2d);
 
             for (Actor actor : level.getActors()) {
-                RenderActorBody result = renderActorBody(actor, g2d);
+                RenderActorBody result = renderActorBody(actor,
+                        g2d, Color.WHITE, 6);
                 renderActorLabel(actor, g2d, result);
             }
+
+            for (Shell actor : level.getShells()) {
+                RenderActorBody result = renderActorBody(actor,
+                        g2d, new Color(255, 166, 0), 2);
+                renderActorLabel(actor, g2d, result);
+            }
+
             if(armorMeshView!=null){
                 armorMeshView.repaint();
             }else if(selectedActor!=null&&selectedActor instanceof SpaceShip){
@@ -113,14 +128,13 @@ public class Render {
         g2d.drawString(label, labelX, labelY);
     }
 
-    private RenderActorBody renderActorBody(Actor actor, Graphics2D g2d) {
+    private RenderActorBody renderActorBody(Actor actor, Graphics2D g2d, Color color, int minDiameter) {
         Vector2d coord = actor.getCoord();
         int x = (int) ((coord.getX() - offsetX) * scale);
         int y = (int) ((coord.getY() - offsetY) * scale);
 
         double radius = actor.radius();
         double screenDiameter = 2 * radius * scale;
-        int minDiameter = 6;
         int actualDiameter = (int) Math.max(minDiameter, screenDiameter);
 
         if (actor == selectedActor) {
@@ -133,7 +147,7 @@ public class Render {
             g2d.drawOval(x - borderDiameter / 2, y - borderDiameter / 2, borderDiameter, borderDiameter);
         }
 
-        g2d.setColor(Color.WHITE);
+        g2d.setColor(color);
         g2d.fillOval(x - actualDiameter / 2, y - actualDiameter / 2, actualDiameter, actualDiameter);
         return new RenderActorBody(x, y, actualDiameter);
     }
@@ -168,6 +182,12 @@ public class Render {
                             p.x / scale + offsetX,
                             p.y / scale + offsetY
                     );
+                }else if (SwingUtilities.isMiddleMouseButton(e) && selectedActor != null) {
+                    Point p = e.getPoint();
+                    level.addShell(selectedActor.strike(
+                            p.x / scale + offsetX,
+                            p.y / scale + offsetY
+                    ));
                 }
             }
 

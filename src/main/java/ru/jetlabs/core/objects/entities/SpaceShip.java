@@ -7,11 +7,13 @@ import ru.jetlabs.core.objects.components.armor.ArmorMaterial;
 import ru.jetlabs.core.objects.components.armor.ArmorMesh;
 import ru.jetlabs.core.objects.components.armor.DamageResult;
 import ru.jetlabs.core.objects.components.engines.Engine;
+import ru.jetlabs.core.objects.components.engines.impls.IdealKineticGun;
 import ru.jetlabs.core.util.structures.Vector2d;
 
 public class SpaceShip extends Actor implements Ship {
     public Engine engine;
     public ArmorMesh armor;
+    public IdealKineticGun gun;
 
     public SpaceShip(double x, double y, Engine engine, ArmorMaterial armorMaterial, int armorDepth) {
         super(x, y, 10, engine.thrust(), calculateRadius(engine.getSize()));
@@ -20,11 +22,29 @@ public class SpaceShip extends Actor implements Ship {
         mass = calculateMass((Component) engine);
     }
 
-    public SpaceShip(double x, double y, Engine engine, ArmorMaterial... armorMaterials) {
+    public SpaceShip(double x, double y,
+                     Engine engine,
+                     ArmorMaterial... armorMaterials) {
         super(x, y, 10, engine.thrust(), calculateRadius(engine.getSize()));
         int armorSize = (int) Math.ceil(2 * Math.PI * radius);
         this.armor = new ArmorMesh(armorSize, armorMaterials);
         mass = calculateMass((Component) engine);
+    }
+
+    public SpaceShip(double x, double y,
+                     Engine engine,
+                     IdealKineticGun gun,
+                     ArmorMaterial... armorMaterials) {
+        super(x, y, 10, engine.thrust(), calculateRadius(engine.getSize()));
+        int armorSize = (int) Math.ceil(2 * Math.PI * radius);
+        this.armor = new ArmorMesh(armorSize, armorMaterials);
+        mass = calculateMass((Component) engine);
+        this.gun = gun;
+        this.gun.owner = this;
+    }
+
+    public Shell strike(double x, double y){
+        return gun.strike(new Vector2d(x,y));
     }
 
     @Override
@@ -171,7 +191,7 @@ public class SpaceShip extends Actor implements Ship {
 
 
     public static double calculateRadius(double totalSize) {
-        return Math.sqrt(totalSize + 5) / Math.PI;
+        return Math.sqrt((totalSize+5)/Math.PI);
     }
 
     public double calculateMass(Component... components) {

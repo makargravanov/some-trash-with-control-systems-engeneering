@@ -19,6 +19,7 @@ public class Main {
         EnergyCalculator.calculate(
                 0.0061,
                 315);
+        System.out.println(RadiusCalculator.getRadius(15*5));
         RadiusCalculator.getCircleLength(RadiusCalculator.getRadius(11.52));
     }
 }
