@@ -14,7 +14,7 @@ public class Shell extends Actor {
         super(x, y,
                 Math.PI * (diam / 2.0) * (diam / 2.0) * len * DENSITY,
                 0,
-                (Math.sqrt((len*diam)/Math.PI))*6);
+                (Math.sqrt((len*diam)/Math.PI)));
         velocityX = velocity.getX();
         velocityY = velocity.getY();
         this.parent = parent;

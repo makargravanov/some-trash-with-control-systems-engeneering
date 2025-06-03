@@ -48,8 +48,8 @@ public class IdealKineticGun extends Component {
 
         Vector2d velocity = direction.multiply(velocityValue);
 
-        shell.velocityY = velocity.getY();
-        shell.velocityX = velocity.getX();
+        shell.velocityY = owner.velocityY + velocity.getY();
+        shell.velocityX = owner.velocityX + velocity.getX();
 
         return shell;
     }
