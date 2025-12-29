@@ -26,8 +26,7 @@ public class Shell extends Actor {
         coord.setX(coord.getX() + velocityX * deltaTime);
         coord.setY(coord.getY() + velocityY * deltaTime);
 
-        for (int i = 0; i < actors.size(); i++) {
-            var actor = actors.get(i);
+        for (Actor actor : actors) {
             if (actor == parent) {
                 continue;
             }
