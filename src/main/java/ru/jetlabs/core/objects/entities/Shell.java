@@ -72,7 +72,9 @@ public class Shell extends Actor {
     }
 
     public void destroy() {
-        shells.remove(this);
+        if (level != null) {
+            level.removeShell(this);
+        }
     }
 
     private boolean checkIntersection(Vector2d a, Vector2d b, Vector2d center, double radius) {

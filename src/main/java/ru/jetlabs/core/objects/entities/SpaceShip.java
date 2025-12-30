@@ -121,7 +121,7 @@ public class SpaceShip extends Actor implements Ship {
             velocityY = 0;
         }
 
-        for (int i = 0; i < actors.size(); i++) {
+        for (int i = actors.size() - 1; i >= 0; i--) {
             var actor = actors.get(i);
             if (actor == this) {
                 continue;

@@ -1,6 +1,7 @@
 package ru.jetlabs.core.objects;
 
 import ru.jetlabs.core.Player;
+import ru.jetlabs.core.environment.Level;
 import ru.jetlabs.core.objects.components.Component;
 import ru.jetlabs.core.objects.entities.Shell;
 import ru.jetlabs.core.util.structures.Vector2d;
@@ -8,6 +9,7 @@ import ru.jetlabs.core.util.structures.Vector2d;
 import java.util.List;
 
 public class Actor {
+    public Level level;
     public List<Actor> actors;
     public final Vector2d coord;
     public Vector2d target;
@@ -71,7 +73,9 @@ public class Actor {
     }
 
     public void destroy() {
-        actors.remove(this);
+        if (level != null) {
+            level.removeActor(this);
+        }
     }
 
     public void hit(Vector2d hitCoord) {

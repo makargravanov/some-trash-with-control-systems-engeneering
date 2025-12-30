@@ -102,13 +102,18 @@ public class Render {
         sidePanel.add(new JScrollPane(radarPanel), BorderLayout.CENTER);
 
         // Нижняя панель - кнопки
-        JPanel buttonPanel = new JPanel(new GridLayout(2, 1, 5, 5));
+        JPanel buttonPanel = new JPanel(new GridLayout(3, 1, 5, 5));
         buttonPanel.setBackground(new Color(50, 50, 70));
 
         JButton createBtn = new JButton("Create Ship (N)");
         createBtn.setFocusable(false);
         createBtn.addActionListener(e -> showCreateDialog());
         buttonPanel.add(createBtn);
+
+        JButton armorBtn = new JButton("View Armor");
+        armorBtn.setFocusable(false);
+        armorBtn.addActionListener(e -> showArmorView());
+        buttonPanel.add(armorBtn);
 
         JButton stopBtn = new JButton("Stop (Space)");
         stopBtn.setFocusable(false);
@@ -137,6 +142,22 @@ public class Render {
         panel.setCursor(Cursor.getDefaultCursor());
         if (createDialog != null && createDialog.isDisplayable()) {
             createDialog.cancelPlacementMode();
+        }
+    }
+
+    private void showArmorView() {
+        SpaceShip ship = getShipForArmor();
+        if (ship != null) {
+            // Закрыть старое окно если есть
+            if (armorMeshView != null) {
+                Window window = SwingUtilities.getWindowAncestor(armorMeshView);
+                if (window != null) {
+                    window.dispose();
+                }
+            }
+            // Создать новое окно
+            armorMeshView = new ArmorMeshView(ship.armor);
+            armorMeshView.setVisible(true);
         }
     }
 
@@ -170,15 +191,9 @@ public class Render {
             // Обновить радар если есть выбранный корабль
             updateRadarPanel();
 
-            // Броня - пересоздавать если окно закрыто или выбран другой корабль
-            SpaceShip shipForArmor = getShipForArmor();
-            if (shipForArmor != null) {
-                if (armorMeshView != null && armorMeshView.isDisplayable()) {
-                    armorMeshView.repaint();
-                } else {
-                    ArmorMesh armor = shipForArmor.armor;
-                    armorMeshView = new ArmorMeshView(armor);
-                }
+            // Броня - только repaint если открыто
+            if (armorMeshView != null && armorMeshView.isDisplayable()) {
+                armorMeshView.repaint();
             }
 
             renderScalingParamsData(g2d);

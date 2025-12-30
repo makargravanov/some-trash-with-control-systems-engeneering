@@ -9,8 +9,11 @@ import java.util.List;
 public class Level {
     private final List<Actor> actors = new ArrayList<>();
     private final List<Shell> shells = new ArrayList<>();
+    private final List<Actor> actorsToRemove = new ArrayList<>();
+    private final List<Shell> shellsToRemove = new ArrayList<>();
 
     public void addActor(Actor actor) {
+        actor.level = this;
         actor.actors = this.actors;
         actors.add(actor);
         System.out.println(actor.mass);
@@ -18,6 +21,7 @@ public class Level {
     }
     public synchronized void addShell(Shell shell) {
         if (shell == null) return;
+        shell.level = this;
         shell.shells = this.shells;
         shells.add(shell);
         shell.actors = this.actors;
@@ -32,13 +36,31 @@ public class Level {
         return shells;
     }
 
+    public synchronized void removeActor(Actor actor) {
+        actorsToRemove.add(actor);
+    }
+
+    public synchronized void removeShell(Shell shell) {
+        shellsToRemove.add(shell);
+    }
+
     public synchronized void updateActors(double deltaTime) {
         for (Actor actor : actors) {
-            actor.update(deltaTime);
+            if (!actorsToRemove.contains(actor)) {
+                actor.update(deltaTime);
+            }
         }
         for (int i = shells.size() - 1; i >= 0; i--) {
             Shell shell = shells.get(i);
-            shell.update(deltaTime);
+            if (!shellsToRemove.contains(shell)) {
+                shell.update(deltaTime);
+            }
         }
+
+        // Удаляем ПОСЛЕ всех обновлений
+        actors.removeAll(actorsToRemove);
+        shells.removeAll(shellsToRemove);
+        actorsToRemove.clear();
+        shellsToRemove.clear();
     }
 }
