@@ -24,6 +24,7 @@ public class Render {
 
     private ArmorMeshView armorMeshView;
     private RadarContactPanel radarPanel;
+    private PlayerSwitcherPanel playerSwitcherPanel;
     private ShipCreationDialog createDialog;
 
     private double scale = 1.0;
@@ -79,9 +80,22 @@ public class Render {
         sidePanel.setPreferredSize(new Dimension(280, 0));
         sidePanel.setBackground(new Color(50, 50, 70));
 
-        // Верхняя панель - выбор игрока
+        // Верхняя панель - выбор игрока + инструкции
+        JPanel northPanel = new JPanel(new BorderLayout(5, 5));
+        northPanel.setBackground(new Color(50, 50, 70));
+
         PlayerSwitcherPanel playerPanel = new PlayerSwitcherPanel(groupSelection);
-        sidePanel.add(playerPanel, BorderLayout.NORTH);
+        this.playerSwitcherPanel = playerPanel;
+        northPanel.add(playerPanel, BorderLayout.NORTH);
+
+        JTextArea helpText = new JTextArea();
+        helpText.setText("LMB: Select | RMB: Move | MMB: Fire\nCtrl+LMB: Add to selection\nDel: Delete | 1-4: Switch player");
+        helpText.setEditable(false);
+        helpText.setBackground(new Color(50, 50, 70));
+        helpText.setForeground(Color.LIGHT_GRAY);
+        northPanel.add(helpText, BorderLayout.CENTER);
+
+        sidePanel.add(northPanel, BorderLayout.NORTH);
 
         // Центральная панель - радар
         radarPanel = new RadarContactPanel(groupSelection, level);
@@ -92,27 +106,18 @@ public class Render {
         buttonPanel.setBackground(new Color(50, 50, 70));
 
         JButton createBtn = new JButton("Create Ship (N)");
+        createBtn.setFocusable(false);
         createBtn.addActionListener(e -> showCreateDialog());
         buttonPanel.add(createBtn);
 
         JButton stopBtn = new JButton("Stop (Space)");
+        stopBtn.setFocusable(false);
         stopBtn.addActionListener(e -> groupSelection.stop());
         buttonPanel.add(stopBtn);
 
         sidePanel.add(buttonPanel, BorderLayout.SOUTH);
 
-        // Инструкции
-        JTextArea helpText = new JTextArea(3, 20);
-        helpText.setText("LMB: Select | RMB: Move | MMB: Fire\nCtrl+LMB: Add to selection\nDel: Delete | 1-4: Switch player");
-        helpText.setEditable(false);
-        helpText.setBackground(new Color(50, 50, 70));
-        helpText.setForeground(Color.LIGHT_GRAY);
-        sidePanel.add(helpText, BorderLayout.NORTH);
-
-        JPanel wrapper = new JPanel(new BorderLayout());
-        wrapper.add(sidePanel, BorderLayout.NORTH);
-        wrapper.add(Box.createVerticalGlue(), BorderLayout.CENTER);
-        return wrapper;
+        return sidePanel;
     }
 
     private void showCreateDialog() {
@@ -165,12 +170,15 @@ public class Render {
             // Обновить радар если есть выбранный корабль
             updateRadarPanel();
 
-            // Броня
-            if(armorMeshView!=null){
-                armorMeshView.repaint();
-            }else if(selectedActor!=null&&selectedActor instanceof SpaceShip){
-                ArmorMesh armor = ((SpaceShip) selectedActor).armor;
-                armorMeshView = new ArmorMeshView(armor);
+            // Броня - пересоздавать если окно закрыто или выбран другой корабль
+            SpaceShip shipForArmor = getShipForArmor();
+            if (shipForArmor != null) {
+                if (armorMeshView != null && armorMeshView.isDisplayable()) {
+                    armorMeshView.repaint();
+                } else {
+                    ArmorMesh armor = shipForArmor.armor;
+                    armorMeshView = new ArmorMeshView(armor);
+                }
             }
 
             renderScalingParamsData(g2d);
@@ -290,6 +298,27 @@ public class Render {
         panel.repaint();
     }
 
+    private SpaceShip getShipForArmor() {
+        // Сначала проверяем групповое выделение
+        Set<Actor> selected = groupSelection.getSelected();
+        if (!selected.isEmpty()) {
+            Actor first = selected.iterator().next();
+            if (first instanceof SpaceShip) {
+                return (SpaceShip) first;
+            }
+        }
+        // Если нет группового, берём selectedActor
+        if (selectedActor instanceof SpaceShip) {
+            return (SpaceShip) selectedActor;
+        }
+        return null;
+    }
+
+    private void switchPlayer(ru.jetlabs.core.Player player) {
+        groupSelection.setCurrentPlayer(player);
+        playerSwitcherPanel.updatePlayer();
+    }
+
     private void setupInputListeners() {
         MouseAdapter mouseAdapter = new MouseAdapter() {
             @Override
@@ -387,7 +416,7 @@ public class Render {
         am.put("player1", new AbstractAction() {
             @Override
             public void actionPerformed(java.awt.event.ActionEvent e) {
-                groupSelection.setCurrentPlayer(ru.jetlabs.core.Player.PLAYER_1);
+                switchPlayer(ru.jetlabs.core.Player.PLAYER_1);
             }
         });
 
@@ -395,7 +424,7 @@ public class Render {
         am.put("player2", new AbstractAction() {
             @Override
             public void actionPerformed(java.awt.event.ActionEvent e) {
-                groupSelection.setCurrentPlayer(ru.jetlabs.core.Player.PLAYER_2);
+                switchPlayer(ru.jetlabs.core.Player.PLAYER_2);
             }
         });
 
@@ -403,7 +432,7 @@ public class Render {
         am.put("player3", new AbstractAction() {
             @Override
             public void actionPerformed(java.awt.event.ActionEvent e) {
-                groupSelection.setCurrentPlayer(ru.jetlabs.core.Player.PLAYER_3);
+                switchPlayer(ru.jetlabs.core.Player.PLAYER_3);
             }
         });
 
@@ -411,7 +440,7 @@ public class Render {
         am.put("playerNeutral", new AbstractAction() {
             @Override
             public void actionPerformed(java.awt.event.ActionEvent e) {
-                groupSelection.setCurrentPlayer(ru.jetlabs.core.Player.NEUTRAL);
+                switchPlayer(ru.jetlabs.core.Player.NEUTRAL);
             }
         });
 

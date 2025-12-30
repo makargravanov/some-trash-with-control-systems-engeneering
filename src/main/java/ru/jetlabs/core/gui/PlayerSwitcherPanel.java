@@ -24,4 +24,9 @@ public class PlayerSwitcherPanel extends JPanel {
         add(new JLabel("Player:"));
         add(playerCombo);
     }
+
+    public void updatePlayer() {
+        Player current = selection.getCurrentPlayer();
+        playerCombo.setSelectedItem(current);
+    }
 }

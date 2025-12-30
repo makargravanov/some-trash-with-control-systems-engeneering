@@ -43,7 +43,7 @@ public class RadarContactPanel extends JPanel {
                     if (entry.contact().type() == ContactType.ACTIVE) {
                         setForeground(new Color(100, 255, 100));  // зеленый
                     } else {
-                        setForeground(new Color(255, 255, 100));  // желтый
+                        setForeground(new Color(255, 62, 2));
                     }
                 }
                 return this;
