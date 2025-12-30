@@ -1,5 +1,6 @@
 package ru.jetlabs.core.objects;
 
+import ru.jetlabs.core.Player;
 import ru.jetlabs.core.objects.components.Component;
 import ru.jetlabs.core.objects.entities.Shell;
 import ru.jetlabs.core.util.structures.Vector2d;
@@ -18,6 +19,7 @@ public class Actor {
     protected double kD = 15;
     public double radius = 10;
     public String name = "Корабль 1";
+    public Player owner = Player.PLAYER_1;  // Кто управляет
     public double heading = 0;        // radians, 0 = восток
     public double turnRate = 2.0;     // radians/sec
 
