@@ -6,6 +6,7 @@ import ru.jetlabs.core.objects.components.armor.ArmorMaterial;
 import ru.jetlabs.core.objects.components.armor.ArmorMesh;
 import ru.jetlabs.core.objects.components.engines.impls.IdealEngine;
 import ru.jetlabs.core.objects.components.engines.impls.IdealKineticGun;
+import ru.jetlabs.core.objects.entities.ShipPresets;
 import ru.jetlabs.core.objects.entities.Shell;
 import ru.jetlabs.core.objects.entities.SpaceShip;
 import ru.jetlabs.core.gui.render.formatters.Formatters;
@@ -36,13 +37,10 @@ public class Render {
 
     public static void main(String[] args) {
         Level level = new Level();
-        level.addActor(new SpaceShip(0,0, new IdealEngine(3.6*3.2),
-                new IdealKineticGun(100,2,0.1,0.6,300_000_000),
-                ArmorMaterial.STEEL, ArmorMaterial.PLASTEEL));
 
-        level.addActor(new SpaceShip(100,100, new IdealEngine(3.6*3.2),
-                new IdealKineticGun(100,2,0.1,0.5,300_000_000),
-                ArmorMaterial.STEEL, ArmorMaterial.PLASTEEL));
+        // Используем пресеты для создания кораблей
+        level.addActor(ShipPresets.LIGHT_FIGHTER.createShip(0, 0));
+        level.addActor(ShipPresets.HEAVY_FIGHTER.createShip(150, 150));
         JFrame frame = new JFrame("Level Render");
 
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

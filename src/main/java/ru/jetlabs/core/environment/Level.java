@@ -17,6 +17,7 @@ public class Level {
         System.out.println(actor.radius);
     }
     public synchronized void addShell(Shell shell) {
+        if (shell == null) return;
         shell.shells = this.shells;
         shells.add(shell);
         shell.actors = this.actors;

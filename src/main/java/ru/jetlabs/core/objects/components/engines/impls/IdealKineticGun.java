@@ -9,17 +9,21 @@ public class IdealKineticGun extends Component {
     public double caliber;
     public double shellLength;
     public double power;  // Энергия в джоулях (предполагаем, что это энергия конденсатора)
+    public double cooldown;  // Задержка между выстрелами в секундах
+    public long lastShotTime;  // Время последнего выстрела (миллисекунды)
     public SpaceShip owner;
 
     public IdealKineticGun(double mass,
                            double size,
                            double caliber,
                            double shellLength,
-                           double power) {
+                           double power,
+                           double cooldown) {
         super(mass, size);
         this.caliber = caliber;
         this.shellLength = shellLength;
         this.power = power;
+        this.cooldown = cooldown;
     }
 
     public IdealKineticGun(double mass, double hp, double size) {
@@ -27,6 +31,11 @@ public class IdealKineticGun extends Component {
     }
 
     public Shell strike(Vector2d target) {
+        long currentTime = System.currentTimeMillis();
+        if (cooldown > 0 && currentTime - lastShotTime < cooldown * 1000) {
+            return null;  // Кулдаун ещё не прошёл
+        }
+
         Shell shell = new Shell(
                 owner.coord.getX(),
                 owner.coord.getY(),
@@ -51,6 +60,7 @@ public class IdealKineticGun extends Component {
         shell.velocityY = owner.velocityY + velocity.getY();
         shell.velocityX = owner.velocityX + velocity.getX();
 
+        lastShotTime = currentTime;
         return shell;
     }
 }
