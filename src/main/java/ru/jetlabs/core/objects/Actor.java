@@ -18,6 +18,8 @@ public class Actor {
     protected double kD = 15;
     public double radius = 10;
     public String name = "Корабль 1";
+    public double heading = 0;        // radians, 0 = восток
+    public double turnRate = 2.0;     // radians/sec
 
     public Actor(double x, double y, double mass, double thrust) {
         this.coord = new Vector2d(x, y);
@@ -52,6 +54,18 @@ public class Actor {
         double dy = y - coord.getY();
         double distance = Math.sqrt(dx * dx + dy * dy);
         kD = Math.sqrt(distance / 20);
+    }
+
+    public void setHeading(double targetHeading, double deltaTime) {
+        double diff = normalizeAngle(targetHeading - heading);
+        double maxTurn = turnRate * deltaTime;
+        heading += Math.signum(diff) * Math.min(Math.abs(diff), maxTurn);
+    }
+
+    protected double normalizeAngle(double a) {
+        while (a > Math.PI) a -= 2 * Math.PI;
+        while (a < -Math.PI) a += 2 * Math.PI;
+        return a;
     }
 
     public void destroy() {

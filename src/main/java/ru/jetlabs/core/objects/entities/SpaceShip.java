@@ -8,12 +8,15 @@ import ru.jetlabs.core.objects.components.armor.ArmorMesh;
 import ru.jetlabs.core.objects.components.armor.DamageResult;
 import ru.jetlabs.core.objects.components.engines.Engine;
 import ru.jetlabs.core.objects.components.engines.impls.IdealKineticGun;
+import ru.jetlabs.core.objects.sensors.Contact;
+import ru.jetlabs.core.objects.sensors.SensorSystem;
 import ru.jetlabs.core.util.structures.Vector2d;
 
 public class SpaceShip extends Actor implements Ship {
     public Engine engine;
     public ArmorMesh armor;
     public IdealKineticGun gun;
+    public SensorSystem sensorSystem;
 
     public SpaceShip(double x, double y, Engine engine, ArmorMaterial armorMaterial, int armorDepth) {
         super(x, y, 10, engine.thrust(), calculateRadius(engine.getSize()));
@@ -45,6 +48,21 @@ public class SpaceShip extends Actor implements Ship {
 
     public Shell strike(double x, double y){
         return gun.strike(new Vector2d(x,y));
+    }
+
+    public Shell strikeByBearing(double bearing) {
+        return gun.strikeByBearing(bearing, heading);
+    }
+
+    public Shell strikeAtContact(Contact contact) {
+        if (contact.distance() == null) {
+            // Пассивный контакт — только направление
+            return gun.strikeByAngle(contact.bearing());
+        }
+        // Активный контакт — можно вычислить точную позицию с учётом шума
+        double targetX = coord.getX() + contact.distance() * Math.cos(contact.bearing());
+        double targetY = coord.getY() + contact.distance() * Math.sin(contact.bearing());
+        return strike(targetX, targetY);
     }
 
     @Override

@@ -15,6 +15,8 @@ public class ShipPresets {
             0.5,
             300_000_000,
             1.0,
+            500,    // radarRange
+            800,    // passiveRadarRange
             new ArmorMaterial[]{ArmorMaterial.STEEL, ArmorMaterial.PLASTEEL}
     );
 
@@ -29,6 +31,8 @@ public class ShipPresets {
             0.7,
             500_000_000,
             1.5,
+            700,    // radarRange
+            1000,   // passiveRadarRange
             new ArmorMaterial[]{ArmorMaterial.STEEL, ArmorMaterial.DURASTEEL, ArmorMaterial.PLASTEEL}
     );
 
@@ -43,6 +47,8 @@ public class ShipPresets {
             0.8,
             800_000_000,
             2.0,
+            1000,   // radarRange
+            1500,   // passiveRadarRange
             new ArmorMaterial[]{ArmorMaterial.TITANIUM_COMPOSITE, ArmorMaterial.DURASTEEL, ArmorMaterial.CERAMIC_COMPOSITE}
     );
 
@@ -57,6 +63,8 @@ public class ShipPresets {
             1.0,
             1_500_000_000,
             3.0,
+            1500,   // radarRange
+            2000,   // passiveRadarRange
             new ArmorMaterial[]{ArmorMaterial.NANO_CARBON, ArmorMaterial.TITANIUM_COMPOSITE, ArmorMaterial.DURASTEEL}
     );
 
@@ -71,6 +79,8 @@ public class ShipPresets {
             0.4,
             200_000_000,
             0.5,
+            400,    // radarRange (маленький активный)
+            1200,   // passiveRadarRange (большой пассивный)
             new ArmorMaterial[]{ArmorMaterial.STEEL}
     );
 
@@ -85,6 +95,8 @@ public class ShipPresets {
             0,
             0,
             0,
+            300,    // radarRange (базовый радар)
+            500,    // passiveRadarRange
             new ArmorMaterial[]{ArmorMaterial.STEEL, ArmorMaterial.STEEL}
     );
 }

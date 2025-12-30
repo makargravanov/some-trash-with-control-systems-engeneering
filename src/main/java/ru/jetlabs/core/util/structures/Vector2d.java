@@ -39,6 +39,12 @@ public class Vector2d {
         return new Vector2d(x,y);
     }
 
+    public double distanceTo(Vector2d other) {
+        double dx = other.x - x;
+        double dy = other.y - y;
+        return Math.sqrt(dx * dx + dy * dy);
+    }
+
     @Override
     public String toString() {
         return "{"+x+":"+y+"}";

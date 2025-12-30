@@ -63,4 +63,44 @@ public class IdealKineticGun extends Component {
         lastShotTime = currentTime;
         return shell;
     }
+
+    // Стрельба по bearing относительно heading корабля
+    public Shell strikeByBearing(double bearing, double shipHeading) {
+        double absoluteAngle = shipHeading + bearing;
+        return strikeByAngle(absoluteAngle);
+    }
+
+    // Стрельба по абсолютному углу
+    public Shell strikeByAngle(double absoluteAngle) {
+        long currentTime = System.currentTimeMillis();
+        if (cooldown > 0 && currentTime - lastShotTime < cooldown * 1000) {
+            return null;
+        }
+
+        Shell shell = new Shell(
+                owner.coord.getX(),
+                owner.coord.getY(),
+                new Vector2d(0, 0),
+                shellLength,
+                caliber,
+                owner
+        );
+
+        double shellMass = shell.mass;
+        double velocityValue = Math.sqrt(2 * power / shellMass);
+
+        // Направление из угла
+        Vector2d direction = new Vector2d(
+            Math.cos(absoluteAngle),
+            Math.sin(absoluteAngle)
+        );
+
+        Vector2d velocity = direction.multiply(velocityValue);
+
+        shell.velocityX = owner.velocityX + velocity.getX();
+        shell.velocityY = owner.velocityY + velocity.getY();
+
+        lastShotTime = currentTime;
+        return shell;
+    }
 }
